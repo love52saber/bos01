@@ -27,6 +27,7 @@ public class ControllerAop {
     public Object loggerAdvice(ProceedingJoinPoint joinPoint) throws Throwable {
         long startTime = System.currentTimeMillis();
         Object result = joinPoint.proceed();
+   /*     logger.info("返回结果--"+result.toString());*/
         logger.info("程序执行时间:--"+(System.currentTimeMillis()-startTime)+"  ms");
         return result;
     }

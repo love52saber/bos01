@@ -9,6 +9,10 @@ public class Result<T> {
 
     private String msg;
 
+    private T data;
+
+
+
     public T getData() {
         return data;
     }
@@ -16,8 +20,6 @@ public class Result<T> {
     public void setData(T data) {
         this.data = data;
     }
-
-    private T data;
 
     public Integer getCode() {
         return code;
@@ -41,5 +43,11 @@ public class Result<T> {
     public Result(Integer code, String msg) {
         this.code = code;
         this.msg = msg;
+    }
+
+    public Result(Integer code, String msg, T data) {
+        this.code = code;
+        this.msg = msg;
+        this.data = data;
     }
 }

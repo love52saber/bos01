@@ -16,6 +16,11 @@
     </bean>
 
     <mvc:default-servlet-handler/>
-
+    <!--aspect注解-->
     <aop:aspectj-autoproxy/>
+
+    <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+        <!-- 设置文件上传大小 5m-->
+        <property name="maxUploadSize" value="5000000"></property>
+    </bean>
 </beans>

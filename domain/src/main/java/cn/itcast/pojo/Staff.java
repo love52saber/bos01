@@ -5,7 +5,8 @@ import org.hibernate.validator.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 
 public class Staff {
-    @NotBlank
+
+    @NotBlank(groups = edit.class)
     private String id;
     @NotBlank
     private String name;
@@ -91,4 +92,19 @@ public class Staff {
     public void setStandard(String standard) {
         this.standard = standard == null ? null : standard.trim();
     }
+
+    @Override
+    public String toString() {
+        return "Staff{" +
+                "id='" + id + '\'' +
+                ", name='" + name + '\'' +
+                ", telephone='" + telephone + '\'' +
+                ", haspda='" + haspda + '\'' +
+                ", deltag='" + deltag + '\'' +
+                ", station='" + station + '\'' +
+                ", standard='" + standard + '\'' +
+                '}';
+    }
 }
+
+interface edit{}

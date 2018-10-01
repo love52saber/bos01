@@ -49,6 +49,10 @@ public class BaseController {
         return new Result(200,"操作成功");
     }
 
+    public <T>  Result success(T t) {
+        return new Result(200,"操作成功",t);
+    }
+
     public Result error() {
         return new Result(400,"操作失败");
     }

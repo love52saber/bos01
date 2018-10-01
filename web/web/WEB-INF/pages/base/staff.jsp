@@ -47,7 +47,33 @@
         }
 
         function doDelete() {
-            alert("删除...");
+            var selectedRowBean = $("#grid").datagrid("getSelections");
+            if (selectedRowBean.length == 0) {
+                $.messager.alert("提示", "还未选择删除的送检人");
+            } else {
+                $.messager.confirm("删除确认","你确定要删除选中的取派员吗？",function (flag) {
+                    if (flag) {
+                        var ids = new Array();
+                        for (var i = 0; i < selectedRowBean.length; i++) {
+                            ids.push(selectedRowBean[i].id);
+                        }
+                        $.post(
+                            "${pageContext.request.contextPath}/staff/delete",
+                            {
+                                "ids":ids
+                            },
+                            function (data) {
+                                var code = data.code;
+                                if (code==200) {
+                                    $("#grid").datagrid("reload");
+                                }
+                                $.messager.alert("提示", data.msg);
+                            }
+                        );
+                    }
+                });
+            }
+
         }
 
         function doRestore() {
@@ -137,13 +163,13 @@
                 border: false,
                 rownumbers: true,
                 striped: true,
-                pageList: [30, 50, 100],
+                pageList: [10, 20, 30],
                 pagination: true,
                 toolbar: toolbar,
-                url: "json/staff.json",
+                url: "${pageContext.request.contextPath}/staff/list",
                 idField: 'id',
                 columns: columns,
-                onDblClickRow: doDblClickRow
+                onDblClickRow: doDblClickRow,
             });
 
             // 添加取派员窗口
@@ -156,26 +182,41 @@
                 height: 400,
                 resizable: false
             });
+            // 添加取派员窗口
+            $('#editStaffWindow').window({
+                title: '添加取派员',
+                width: 400,
+                modal: true,
+                shadow: true,
+                closed: true,
+                height: 400,
+                resizable: false
+            });
 
         });
 
         function doDblClickRow(rowIndex, rowData) {
-            alert("双击表格数据...");
+            //点击弹出编辑弹窗
+            $("#editStaffWindow").window("open");
+            //将本行数据回显
+            $("#editStaffForm").form("load",rowData);
         }
 
-        function addStaff() {
-            var isValidate = $("#addStaffForm").validate();
+        function editStaff() {
+            var isValidate = $("#editStaffForm").form("validate");
             if (isValidate) {
-                //验证通过
-                $("#addStaffForm").form("submit", {
-                    url: "${pageContext.request.contextPath}/staff/add",
-                    success: function (data) {
-                        var code = data.code;
+                //验证通过d
+                $("#editStaffForm").form("submit", {
+                    url: "${pageContext.request.contextPath}/staff/edit",
+                    success: function (data){
+                        var jsonData = JSON.parse(data);
+                        var code = jsonData.code;
                         if (code == 200) {
-                            $("#editPwdWindow").form("clear").window("close");
-
+                            $("#editStaffForm").form("clear");
+                            $("#editStaffWindow").window("close");
+                            $("#grid").datagrid("reload");
                         }
-                        $.messager.alert("提示", data.msg);
+                        $.messager.alert("提示", jsonData.msg);
                     }
                 });
             } else {
@@ -183,6 +224,30 @@
                 $.messager.alert("提示", "表单有错误");
             }
         }
+
+        function addStaff() {
+            var isValidate = $("#addStaffForm").form("validate");
+            if (isValidate) {
+                //验证通过d
+                $("#addStaffForm").form("submit", {
+                    url: "${pageContext.request.contextPath}/staff/add",
+                    success: function (data){
+                        var jsonData = JSON.parse(data);
+                        var code = jsonData.code;
+                        if (code == 200) {
+                            $("#addStaffForm").form("clear");
+                            $("#addStaffWindow").window("close");
+                            $("#grid").datagrid("reload");
+                        }
+                        $.messager.alert("提示", jsonData.msg);
+                    }
+                });
+            } else {
+                //验证未通过
+                $.messager.alert("提示", "表单有错误");
+            }
+        }
+
     </script>
 </head>
 <body class="easyui-layout" style="visibility:hidden;">
@@ -194,20 +259,70 @@
     <div region="north" style="height:31px;overflow:hidden;" split="false" border="false">
         <div class="datagrid-toolbar">
             <a id="save" icon="icon-save" href="javascript:addStaff()" class="easyui-linkbutton" plain="true">保存</a>
-        </div>
+        </div>d
     </div>
 
-    <div region="center" style="overflow:auto;padding:5px;" border="false" id="addStaffForm">
-        <form>
+    <div region="center" style="overflow:auto;padding:5px;" border="false" >
+        <form id="addStaffForm" method="post">
             <table class="table-edit" width="80%" align="center">
                 <tr class="title">
                     <td colspan="2">收派员信息</td>
                 </tr>
-                <!-- TODO 这里完善收派员添加 table -->
+<%--                <!-- TODO 这里完善收派员添加 table -->
                 <tr>
                     <td>取派员编号</td>
                     <td><input type="text" name="id" class="easyui-validatebox" required="true"/></td>
+                </tr>--%>
+
+                <tr>
+                    <td>姓名</td>
+                    <td><input type="text" name="name" class="easyui-validatebox" required="true"/></td>
                 </tr>
+                <tr>
+                    <td>手机</td>
+                    <td><input type="text" name="telephone" class="easyui-validatebox" data-options="validType:'tel'"
+                               required="true"/></td>
+                </tr>
+                <tr>
+                    <td>单位</td>
+                    <td><input type="text" name="station" class="easyui-validatebox" required="true"/></td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <input type="checkbox" name="haspda" value="1"/>
+                        是否有PDA
+                    </td>
+                </tr>
+                <tr>
+                    <td>取派标准</td>
+                    <td>
+                        <input type="text" name="standard" class="easyui-validatebox" required="true"/>
+                    </td>
+                </tr>
+            </table>
+        </form>
+    </div>
+</div>
+<div class="easyui-window" title="对收派员进行改" id="editStaffWindow" collapsible="false" minimizable="false"
+     maximizable="false" style="top:20px;left:200px">
+    <div region="north" style="height:31px;overflow:hidden;" split="false" border="false">
+        <div class="datagrid-toolbar">
+            <a id="edit" icon="icon-save" href="javascript:editStaff()" class="easyui-linkbutton" plain="true">修改</a>
+        </div>d
+    </div>
+
+    <div region="center" style="overflow:auto;padding:5px;" border="false" >
+        <form id="editStaffForm" method="post">
+            <input type="hidden" class="hidden" name="id" >
+            <table class="table-edit" width="80%" align="center">
+                <tr class="title">
+                    <td colspan="2">收派员信息</td>
+                </tr>
+                <%--                <!-- TODO 这里完善收派员添加 table -->
+                                <tr>
+                                    <td>取派员编号</td>
+                                    <td><input type="text" name="id" class="easyui-validatebox" required="true"/></td>
+                                </tr>--%>
                 <tr>
                     <td>姓名</td>
                     <td><input type="text" name="name" class="easyui-validatebox" required="true"/></td>

@@ -21,7 +21,6 @@ public class GlobalExceptionHandler implements HandlerExceptionResolver {
     @Override
     public ModelAndView resolveException(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Object o, Exception e) {
         Result<?> result = new Result<>();
-        JSONObject jsonObject = new JSONObject();
         ModelAndView modelAndView = new ModelAndView();
 
         result = getResultFromException(e);
@@ -29,8 +28,8 @@ public class GlobalExceptionHandler implements HandlerExceptionResolver {
             try {
                 //ajax请求
                 String s = JSONObject.toJSONString(result);
-                PrintWriter writer = httpServletResponse.getWriter();
                 httpServletResponse.setContentType("text/json;charset=utf-8");
+                PrintWriter writer = httpServletResponse.getWriter();
                 writer.write(s);
                 writer.flush();
             } catch (IOException e1) {
@@ -47,11 +46,12 @@ public class GlobalExceptionHandler implements HandlerExceptionResolver {
         Result<?> result = new Result<>();
         if (e instanceof ParamException) {
             result.setCode(701);
+            result.setMsg(e.getMessage());
         }else{
             result.setCode(400);
+            result.setMsg("未知错误");
             logger.error("未知异常",e);
         }
-        result.setMsg(e.getMessage());
         return result;
     }
 }

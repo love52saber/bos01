@@ -11,13 +11,7 @@
         <module name="service" />
         <module name="utils" />
         <module name="web" />
-        <module name="webt" />
-        <module name="webt2" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel>
-      <module name="webt" target="1.7" />
-      <module name="webt2" target="1.7" />
-    </bytecodeTargetLevel>
   </component>
 </project>

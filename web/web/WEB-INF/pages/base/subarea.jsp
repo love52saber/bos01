@@ -47,10 +47,6 @@
 		alert("导出");
 	}
 	
-	function doImport(){
-		alert("导入");
-	}
-	
 	//工具栏
 	var toolbar = [ {
 		id : 'button-search',	
@@ -192,11 +188,7 @@
 		});
 		
 	});
-
-	function doDblClickRow(){
-		alert("双击表格数据...");
-	}
-</script>	
+</script>
 </head>
 <body class="easyui-layout" style="visibility:hidden;">
 	<div region="center" border="false">

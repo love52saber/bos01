@@ -11,15 +11,26 @@
 	<script type="text/javascript" src="${pageContext.request.contextPath }/js/easyui/jquery.easyui.min.js"></script>
 </head>
 <body>
-<table class="easyui-datagrid" style="width:400px;height:250px"
-       data-options="url:'datagrid_data.json',fitColumns:true,singleSelect:true">
+<table class="easyui-datagrid">
     <thead>
     <tr>
-        <th data-options="field:'code',width:100">编码</th>
-        <th data-options="field:'name',width:100">名称</th>
-        <th data-options="field:'price',width:100,align:'right'">价格</th>
+        <th data-options="field:'id'">编号</th>
+        <th data-options="field:'name'">姓名</th>
+        <th data-options="field:'age'">年龄</th>
     </tr>
     </thead>
+    <tbody>
+    <tr>
+        <td>001</td>
+        <td>小明</td>
+        <td>90</td>
+    </tr>
+    <tr>
+        <td>002</td>
+        <td>老王</td>
+        <td>3</td>
+    </tr>
+    </tbody>
 </table>
 </body>
 <script !src="">

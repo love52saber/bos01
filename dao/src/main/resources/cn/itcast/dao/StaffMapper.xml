@@ -16,7 +16,7 @@
     id, name, telephone, haspda, deltag, station, standard
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
-    select 
+    select
     <include refid="Base_Column_List" />
     from bc_staff
     where id = #{id,jdbcType=VARCHAR}
@@ -26,7 +26,7 @@
     where id = #{id,jdbcType=VARCHAR}
   </delete>
   <insert id="insert" parameterType="cn.itcast.pojo.Staff">
-    insert into bc_staff (id, name, telephone, 
+    insert into bc_staff (id, name, telephone,
       haspda, deltag, station, 
       standard)
     values (#{id,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{telephone,jdbcType=VARCHAR}, 
@@ -116,119 +116,43 @@
       standard = #{standard,jdbcType=VARCHAR}
     where id = #{id,jdbcType=VARCHAR}
   </update>
-  <resultMap id="BaseResultMap" type="cn.itcast.pojo.Staff">
-    <constructor>
-      <idArg column="id" javaType="java.lang.String" jdbcType="VARCHAR" />
-      <arg column="name" javaType="java.lang.String" jdbcType="VARCHAR" />
-      <arg column="telephone" javaType="java.lang.String" jdbcType="VARCHAR" />
-      <arg column="haspda" javaType="java.lang.String" jdbcType="CHAR" />
-      <arg column="deltag" javaType="java.lang.String" jdbcType="CHAR" />
-      <arg column="station" javaType="java.lang.String" jdbcType="VARCHAR" />
-      <arg column="standard" javaType="java.lang.String" jdbcType="VARCHAR" />
-    </constructor>
-  </resultMap>
-  <sql id="Base_Column_List">
-    id, name, telephone, haspda, deltag, station, standard
-  </sql>
-  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
-    select 
+
+  <!--自定义sql-->
+  <select id="selectSelective" parameterType="staff" resultType="staff">
+    select
     <include refid="Base_Column_List" />
     from bc_staff
-    where id = #{id,jdbcType=VARCHAR}
+    <where>
+      <if test="id != null">
+        and id = #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null">
+        and name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="telephone != null">
+        and telephone = #{telephone,jdbcType=VARCHAR},
+      </if>
+      <if test="haspda != null">
+        and haspda = #{haspda,jdbcType=CHAR},
+      </if>
+      <if test="deltag != null">
+        and deltag = #{deltag,jdbcType=CHAR},
+      </if>
+      <if test="station != null">
+        and  station = #{station,jdbcType=VARCHAR},
+      </if>
+      <if test="standard != null">
+        and  standard = #{standard,jdbcType=VARCHAR},
+      </if>
+    </where>
   </select>
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
-    delete from bc_staff
-    where id = #{id,jdbcType=VARCHAR}
-  </delete>
-  <insert id="insert" parameterType="cn.itcast.pojo.Staff">
-    insert into bc_staff (id, name, telephone, 
-      haspda, deltag, station, 
-      standard)
-    values (#{id,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{telephone,jdbcType=VARCHAR}, 
-      #{haspda,jdbcType=CHAR}, #{deltag,jdbcType=CHAR}, #{station,jdbcType=VARCHAR}, 
-      #{standard,jdbcType=VARCHAR})
-  </insert>
-  <insert id="insertSelective" parameterType="cn.itcast.pojo.Staff">
-    insert into bc_staff
-    <trim prefix="(" suffix=")" suffixOverrides=",">
-      <if test="id != null">
-        id,
-      </if>
-      <if test="name != null">
-        name,
-      </if>
-      <if test="telephone != null">
-        telephone,
-      </if>
-      <if test="haspda != null">
-        haspda,
-      </if>
-      <if test="deltag != null">
-        deltag,
-      </if>
-      <if test="station != null">
-        station,
-      </if>
-      <if test="standard != null">
-        standard,
-      </if>
-    </trim>
-    <trim prefix="values (" suffix=")" suffixOverrides=",">
-      <if test="id != null">
-        #{id,jdbcType=VARCHAR},
-      </if>
-      <if test="name != null">
-        #{name,jdbcType=VARCHAR},
-      </if>
-      <if test="telephone != null">
-        #{telephone,jdbcType=VARCHAR},
-      </if>
-      <if test="haspda != null">
-        #{haspda,jdbcType=CHAR},
-      </if>
-      <if test="deltag != null">
-        #{deltag,jdbcType=CHAR},
-      </if>
-      <if test="station != null">
-        #{station,jdbcType=VARCHAR},
-      </if>
-      <if test="standard != null">
-        #{standard,jdbcType=VARCHAR},
-      </if>
-    </trim>
-  </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="cn.itcast.pojo.Staff">
+
+  <update  id="logicDeleteBatch" parameterType="list">
     update bc_staff
-    <set>
-      <if test="name != null">
-        name = #{name,jdbcType=VARCHAR},
-      </if>
-      <if test="telephone != null">
-        telephone = #{telephone,jdbcType=VARCHAR},
-      </if>
-      <if test="haspda != null">
-        haspda = #{haspda,jdbcType=CHAR},
-      </if>
-      <if test="deltag != null">
-        deltag = #{deltag,jdbcType=CHAR},
-      </if>
-      <if test="station != null">
-        station = #{station,jdbcType=VARCHAR},
-      </if>
-      <if test="standard != null">
-        standard = #{standard,jdbcType=VARCHAR},
-      </if>
-    </set>
-    where id = #{id,jdbcType=VARCHAR}
-  </update>
-  <update id="updateByPrimaryKey" parameterType="cn.itcast.pojo.Staff">
-    update bc_staff
-    set name = #{name,jdbcType=VARCHAR},
-      telephone = #{telephone,jdbcType=VARCHAR},
-      haspda = #{haspda,jdbcType=CHAR},
-      deltag = #{deltag,jdbcType=CHAR},
-      station = #{station,jdbcType=VARCHAR},
-      standard = #{standard,jdbcType=VARCHAR}
-    where id = #{id,jdbcType=VARCHAR}
+    set deltag = '1'
+    where id in
+   <foreach collection="array" item="id" open="(" close=")" separator=",">
+     #{id}
+   </foreach>
   </update>
 </mapper>
